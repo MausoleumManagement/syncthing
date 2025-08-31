@@ -1,0 +1,19 @@
+# https://github.com/kubernetes-csi/csi-driver-nfs/blob/master/deploy/example/README.md#pvpvc-usage-static-provisioning
+# https://github.com/kubernetes-csi/csi-driver-nfs/blob/master/docs/driver-parameters.md
+# https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/deploy/example/pvc-nfs-csi-static.yaml
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: syncthing-wunderhort-programming-static
+spec:
+  # this storage class does not exist, the PV and PVC
+  # are matched based on their name
+  storageClassName: dummy-nfs-external
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Ti
+  volumeMode: Filesystem
+  volumeName: syncthing-wunderhort-programming-static

@@ -1,0 +1,34 @@
+# https://github.com/kubernetes-csi/csi-driver-nfs/blob/master/deploy/example/README.md#pvpvc-usage-static-provisioning
+# https://github.com/kubernetes-csi/csi-driver-nfs/blob/master/docs/driver-parameters.md
+# https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/deploy/example/pv-nfs-csi.yaml
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: syncthing-wunderhort-programming-static
+spec:
+  # this storage class does not exist, the PV and PVC
+  # are matched based on their name
+  storageClassName: dummy-nfs-external
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 5Ti
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: syncthing-wunderhort-programming-static
+    namespace: syncthing
+  csi:
+    driver: nfs.csi.k8s.io
+    # the examples recommend this format: {nfs-server-address}#{sub-dir-name}#{share-name}
+    # since our share was not dynamically provisioned and hence does not have a subdirectory
+    # we made one up, that should hopefully be unique
+    # openssl rand -hex 20
+    # make sure this value is unique for every share in the cluster
+    volumeHandle: wunderhort-nfs.irminsul-dc81ffc7145150fb2d2f079105fd15e5044f9093-programming
+    volumeAttributes:
+      server: wunderhort-nfs.irminsul
+      share: /wunderhort/programming
+  persistentVolumeReclaimPolicy: Retain
+  volumeMode: Filesystem

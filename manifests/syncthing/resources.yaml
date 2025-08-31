@@ -1,0 +1,381 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: syncthing
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kube-vip.io/loadbalancerIPs: 192.168.249.4
+  labels:
+    app: syncthing-22.1.4
+    app.kubernetes.io/instance: syncthing
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: syncthing
+    app.kubernetes.io/version: 2.0.2
+    helm-revision: "1"
+    helm.sh/chart: syncthing-22.1.4
+    release: syncthing
+    service.name: main
+  name: syncthing
+  namespace: syncthing
+spec:
+  allocateLoadBalancerNodePorts: false
+  ports:
+  - name: main
+    port: 8384
+    protocol: TCP
+    targetPort: 8384
+  publishNotReadyAddresses: false
+  selector:
+    app.kubernetes.io/instance: syncthing
+    app.kubernetes.io/name: syncthing
+    pod.name: main
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kube-vip.io/loadbalancerIPs: 192.168.249.4
+  labels:
+    app: syncthing-22.1.4
+    app.kubernetes.io/instance: syncthing
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: syncthing
+    app.kubernetes.io/version: 2.0.2
+    helm-revision: "1"
+    helm.sh/chart: syncthing-22.1.4
+    release: syncthing
+    service.name: discovery
+  name: syncthing-discovery
+  namespace: syncthing
+spec:
+  allocateLoadBalancerNodePorts: false
+  ports:
+  - name: discovery
+    port: 21027
+    protocol: UDP
+    targetPort: 21027
+  publishNotReadyAddresses: false
+  selector:
+    app.kubernetes.io/instance: syncthing
+    app.kubernetes.io/name: syncthing
+    pod.name: main
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kube-vip.io/loadbalancerIPs: 192.168.249.4
+  labels:
+    app: syncthing-22.1.4
+    app.kubernetes.io/instance: syncthing
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: syncthing
+    app.kubernetes.io/version: 2.0.2
+    helm-revision: "1"
+    helm.sh/chart: syncthing-22.1.4
+    release: syncthing
+    service.name: listeners
+  name: syncthing-listeners
+  namespace: syncthing
+spec:
+  allocateLoadBalancerNodePorts: false
+  ports:
+  - name: tcp
+    port: 22000
+    protocol: TCP
+    targetPort: 22000
+  publishNotReadyAddresses: false
+  selector:
+    app.kubernetes.io/instance: syncthing
+    app.kubernetes.io/name: syncthing
+    pod.name: main
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kube-vip.io/loadbalancerIPs: 192.168.249.4
+  labels:
+    app: syncthing-22.1.4
+    app.kubernetes.io/instance: syncthing
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: syncthing
+    app.kubernetes.io/version: 2.0.2
+    helm-revision: "1"
+    helm.sh/chart: syncthing-22.1.4
+    release: syncthing
+    service.name: listeners-udp
+  name: syncthing-listeners-udp
+  namespace: syncthing
+spec:
+  allocateLoadBalancerNodePorts: false
+  ports:
+  - name: udp
+    port: 22000
+    protocol: UDP
+    targetPort: 22000
+  publishNotReadyAddresses: false
+  selector:
+    app.kubernetes.io/instance: syncthing
+    app.kubernetes.io/name: syncthing
+    pod.name: main
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: syncthing-wunderhort-programming-static
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 5Ti
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: syncthing-wunderhort-programming-static
+    namespace: syncthing
+  csi:
+    driver: nfs.csi.k8s.io
+    volumeAttributes:
+      server: wunderhort-nfs.irminsul
+      share: /wunderhort/programming
+    volumeHandle: wunderhort-nfs.irminsul-dc81ffc7145150fb2d2f079105fd15e5044f9093-programming
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: dummy-nfs-external
+  volumeMode: Filesystem
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: syncthing-22.1.4
+    app.kubernetes.io/instance: syncthing
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: syncthing
+    app.kubernetes.io/version: 2.0.2
+    helm-revision: "1"
+    helm.sh/chart: syncthing-22.1.4
+    release: syncthing
+  name: syncthing-config
+  namespace: syncthing
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: syncthing-wunderhort-programming-static
+  namespace: syncthing
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Ti
+  storageClassName: dummy-nfs-external
+  volumeMode: Filesystem
+  volumeName: syncthing-wunderhort-programming-static
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: syncthing-22.1.4
+    app.kubernetes.io/instance: syncthing
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: syncthing
+    app.kubernetes.io/version: 2.0.2
+    helm-revision: "1"
+    helm.sh/chart: syncthing-22.1.4
+    release: syncthing
+  name: syncthing
+  namespace: syncthing
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: syncthing
+      app.kubernetes.io/name: syncthing
+      pod.name: main
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        checksum/cnpg: 2291fc448ae81adfd860632d73e38ffc039fc25959ede77cf692f754199383ee
+        checksum/configmaps: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+        checksum/mariadb: 09c85576cb45b1eecd1467732b11ea8fa3363b0105c465f02a6ad64991521d52
+        checksum/mongodb: 09c85576cb45b1eecd1467732b11ea8fa3363b0105c465f02a6ad64991521d52
+        checksum/persistence: b89d779e03d2e17f605ef0ea25643f3a90766a22c2786a21c88d3a4b74c4b847
+        checksum/redis: 013343a028cbb3f7e08f4ba7522702dd98e52632c688641074b0b1db3df29894
+        checksum/secrets: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+        checksum/services: b2637b28b14d14199ff9ca78e9416020aab9d471a7ac6a9ed3d2e785463744ed
+        checksum/solr: 29c14feeaddbf7762052db593898d274941f539cee681ddc613957587686f347
+      labels:
+        app: syncthing-22.1.4
+        app.kubernetes.io/instance: syncthing
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: syncthing
+        app.kubernetes.io/version: 2.0.2
+        helm-revision: "1"
+        helm.sh/chart: syncthing-22.1.4
+        pod.lifecycle: permanent
+        pod.name: main
+        release: syncthing
+        truecharts.org/pvc: config_syncthing-wunderhort-programming-static
+    spec:
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: truecharts.org/pvc
+                operator: In
+                values:
+                - config_syncthing-wunderhort-programming-static
+            topologyKey: kubernetes.io/hostname
+      automountServiceAccountToken: false
+      containers:
+      - env:
+        - name: TZ
+          value: UTC
+        - name: UMASK
+          value: "0022"
+        - name: UMASK_SET
+          value: "0022"
+        - name: NVIDIA_VISIBLE_DEVICES
+          value: void
+        - name: S6_READ_ONLY_ROOT
+          value: "1"
+        image: docker.io/syncthing/syncthing:2.0.2@sha256:0c62d8223eb8cdf2451452aa567ef628dfcb2b53af2bd25b56517617ae898c35
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 5
+          httpGet:
+            path: /rest/noauth/health
+            port: 8384
+            scheme: HTTP
+          initialDelaySeconds: 12
+          periodSeconds: 15
+          successThreshold: 1
+          timeoutSeconds: 5
+        name: syncthing
+        ports:
+        - containerPort: 21027
+          hostPort: null
+          name: discovery
+          protocol: UDP
+        - containerPort: 22000
+          hostPort: null
+          name: tcp
+          protocol: TCP
+        - containerPort: 22000
+          hostPort: null
+          name: udp
+          protocol: UDP
+        - containerPort: 8384
+          hostPort: null
+          name: main
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 4
+          httpGet:
+            path: /rest/noauth/health
+            port: 8384
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 12
+          successThreshold: 2
+          timeoutSeconds: 5
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1500Mi
+          requests:
+            cpu: 100m
+            memory: 250Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            add: []
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+          runAsGroup: 568
+          runAsNonRoot: true
+          runAsUser: 568
+          seccompProfile:
+            type: RuntimeDefault
+        startupProbe:
+          failureThreshold: 60
+          httpGet:
+            path: /rest/noauth/health
+            port: 8384
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 3
+        stdin: false
+        tty: false
+        volumeMounts:
+        - mountPath: /var/syncthing
+          name: config
+          readOnly: false
+        - mountPath: /wunderhort/programming
+          name: syncthing-wunderhort-programming-static
+          readOnly: false
+      dnsConfig:
+        options:
+        - name: ndots
+          value: "1"
+      dnsPolicy: ClusterFirst
+      enableServiceLinks: false
+      hostIPC: false
+      hostNetwork: false
+      hostPID: false
+      hostUsers: true
+      nodeSelector:
+        kubernetes.io/arch: amd64
+      restartPolicy: Always
+      runtimeClassName: null
+      securityContext:
+        fsGroup: 568
+        fsGroupChangePolicy: OnRootMismatch
+        supplementalGroups:
+        - 568
+        sysctls: []
+      serviceAccountName: default
+      shareProcessNamespace: false
+      terminationGracePeriodSeconds: 60
+      topologySpreadConstraints:
+      - labelSelector:
+          matchLabels:
+            app.kubernetes.io/instance: syncthing
+            app.kubernetes.io/name: syncthing
+            pod.name: main
+        maxSkew: 1
+        nodeAffinityPolicy: Honor
+        nodeTaintsPolicy: Honor
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: ScheduleAnyway
+      volumes:
+      - name: config
+        persistentVolumeClaim:
+          claimName: syncthing-config
+      - name: syncthing-wunderhort-programming-static
+        persistentVolumeClaim:
+          claimName: syncthing-wunderhort-programming-static

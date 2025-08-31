@@ -1,0 +1,73 @@
+# the truecharts people seem to derive most of their resources from
+# a common chart that gets pulled in as a dependency 
+# makes stuff harder to read (hello, bitnami!)
+# but i am sure there are some upsides to that too (i hope)
+# Here are some places to look if you want to engross yourself in their ideas
+# https://truecharts.org/common/
+# https://truecharts.org/common/persistence/
+# https://truecharts.org/charts/stable/syncthing
+# https://github.com/trueforge-org/truecharts/tree/master/charts/library/common
+# https://github.com/trueforge-org/truecharts/blob/master/charts/library/common/values.yaml
+# https://github.com/trueforge-org/truecharts/blob/master/charts/stable/syncthing/values.yaml
+
+
+global:
+  storageClass: cephfs
+
+service:
+  main:
+    type: LoadBalancer
+    annotations:
+      kube-vip.io/loadbalancerIPs: 192.168.249.4
+  listeners:
+    type: LoadBalancer
+    annotations:
+      kube-vip.io/loadbalancerIPs: 192.168.249.4
+  listeners-udp:
+    type: LoadBalancer
+    annotations:
+      kube-vip.io/loadbalancerIPs: 192.168.249.4
+  discovery:
+    type: LoadBalancer
+    annotations:
+      kube-vip.io/loadbalancerIPs: 192.168.249.4
+
+
+persistence:
+  syncthing-wunderhort-programming-static:
+    type: pvc
+    existingClaim: syncthing-wunderhort-programming-static
+    mountPath: /wunderhort/programming
+    enabled: true
+  # the truecharts people want to eat 1.5G of RAM for various dirs each
+  # see https://github.com/trueforge-org/truecharts/blob/v2.0.0/charts/library/common/values.yaml#L261
+  # seems like a waste, so let's not do that
+  shared:
+    enabled: false
+    type: emptyDir
+    mountPath: /shared
+    targetSelectAll: true
+  varlogs:
+    enabled: false
+    type: emptyDir
+    mountPath: /var/logs
+    medium: Memory
+    targetSelectAll: true
+  varrun:
+    enabled: false
+    type: emptyDir
+    mountPath: /var/run
+    medium: Memory
+    targetSelectAll: true
+  tmp:
+    enabled: false
+    type: emptyDir
+    mountPath: /tmp
+    medium: Memory
+    targetSelectAll: true
+  devshm:
+    enabled: false
+    type: emptyDir
+    mountPath: /dev/shm
+    medium: Memory
+    targetSelectAll: true
