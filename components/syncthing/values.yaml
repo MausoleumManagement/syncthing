@@ -22,6 +22,14 @@ resources:
 global:
   storageClass: cephfs
 
+securityContext:
+  # -- Container security context for all containers
+  # Can be overruled per container
+  container:
+    runAsUser: 1000
+    runAsGroup: 1000
+
+
 service:
   main:
     type: LoadBalancer
