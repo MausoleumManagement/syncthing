@@ -11,6 +11,14 @@
 # https://github.com/trueforge-org/truecharts/blob/master/charts/stable/syncthing/values.yaml
 
 
+resources:
+  limits:
+    cpu: 4000m
+    memory: 16000Mi
+  requests:
+    cpu: 1000m
+    memory: 500Mi
+
 global:
   storageClass: cephfs
 
