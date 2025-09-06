@@ -154,6 +154,8 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  annotations:
+    helm.sh/resource-policy: keep
   labels:
     app: syncthing-22.1.4
     app.kubernetes.io/instance: syncthing
@@ -163,14 +165,15 @@ metadata:
     helm-revision: "1"
     helm.sh/chart: syncthing-22.1.4
     release: syncthing
-  name: syncthing-config
+  name: syncthing-data
   namespace: syncthing
 spec:
   accessModes:
-  - ReadWriteOnce
+  - ReadWriteMany
   resources:
     requests:
       storage: 100Gi
+  storageClassName: cephfs
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -218,7 +221,7 @@ spec:
         checksum/configmaps: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
         checksum/mariadb: 09c85576cb45b1eecd1467732b11ea8fa3363b0105c465f02a6ad64991521d52
         checksum/mongodb: 09c85576cb45b1eecd1467732b11ea8fa3363b0105c465f02a6ad64991521d52
-        checksum/persistence: b89d779e03d2e17f605ef0ea25643f3a90766a22c2786a21c88d3a4b74c4b847
+        checksum/persistence: 057a9398f000771001c7fc53ffea9e59ec47c8193ce925a8a4137ce084c99685
         checksum/redis: 013343a028cbb3f7e08f4ba7522702dd98e52632c688641074b0b1db3df29894
         checksum/secrets: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
         checksum/services: b2637b28b14d14199ff9ca78e9416020aab9d471a7ac6a9ed3d2e785463744ed
@@ -234,7 +237,7 @@ spec:
         pod.lifecycle: permanent
         pod.name: main
         release: syncthing
-        truecharts.org/pvc: config_syncthing-wunderhort-programming-static
+        truecharts.org/pvc: data_syncthing-wunderhort-programming-static
     spec:
       affinity:
         podAffinity:
@@ -244,7 +247,7 @@ spec:
               - key: truecharts.org/pvc
                 operator: In
                 values:
-                - config_syncthing-wunderhort-programming-static
+                - data_syncthing-wunderhort-programming-static
             topologyKey: kubernetes.io/hostname
       automountServiceAccountToken: false
       containers:
@@ -314,9 +317,9 @@ spec:
             - ALL
           privileged: false
           readOnlyRootFilesystem: true
-          runAsGroup: 1000
+          runAsGroup: 568
           runAsNonRoot: true
-          runAsUser: 1000
+          runAsUser: 568
           seccompProfile:
             type: RuntimeDefault
         startupProbe:
@@ -333,10 +336,25 @@ spec:
         tty: false
         volumeMounts:
         - mountPath: /var/syncthing
-          name: config
+          name: data
+          readOnly: false
+        - mountPath: /dev/shm
+          name: devshm
+          readOnly: false
+        - mountPath: /shared
+          name: shared
           readOnly: false
         - mountPath: /wunderhort/programming
           name: syncthing-wunderhort-programming-static
+          readOnly: false
+        - mountPath: /tmp
+          name: tmp
+          readOnly: false
+        - mountPath: /var/logs
+          name: varlogs
+          readOnly: false
+        - mountPath: /var/run
+          name: varrun
           readOnly: false
       dnsConfig:
         options:
@@ -373,9 +391,19 @@ spec:
         topologyKey: kubernetes.io/hostname
         whenUnsatisfiable: ScheduleAnyway
       volumes:
-      - name: config
+      - emptyDir: {}
+        name: devshm
+      - emptyDir: {}
+        name: shared
+      - emptyDir: {}
+        name: tmp
+      - emptyDir: {}
+        name: varlogs
+      - emptyDir: {}
+        name: varrun
+      - name: data
         persistentVolumeClaim:
-          claimName: syncthing-config
+          claimName: syncthing-data
       - name: syncthing-wunderhort-programming-static
         persistentVolumeClaim:
           claimName: syncthing-wunderhort-programming-static

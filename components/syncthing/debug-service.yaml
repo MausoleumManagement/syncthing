@@ -1,0 +1,76 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+  name: syncthing-debug-discovery
+  namespace: syncthing
+spec:
+  ports:
+  - name: discovery
+    port: 21027
+    protocol: UDP
+    targetPort: 21027
+    nodePort: 31027
+  publishNotReadyAddresses: false
+  selector:
+    app.kubernetes.io/instance: syncthing
+    app.kubernetes.io/name: syncthing
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+  name: syncthing-debug-listener-tcp
+  namespace: syncthing
+spec:
+  ports:
+  - name: listener-tcp
+    port: 22000
+    protocol: TCP
+    targetPort: 22000
+    nodePort: 32000
+  publishNotReadyAddresses: false
+  selector:
+    app.kubernetes.io/instance: syncthing
+    app.kubernetes.io/name: syncthing
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+  name: syncthing-debug-listener-udp
+  namespace: syncthing
+spec:
+  ports:
+  - name: listener-udp
+    port: 22000
+    protocol: UDP
+    targetPort: 22000
+    nodePort: 32001
+  publishNotReadyAddresses: false
+  selector:
+    app.kubernetes.io/instance: syncthing
+    app.kubernetes.io/name: syncthing
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+  name: syncthing-debug-webui
+  namespace: syncthing
+spec:
+  ports:
+  - name: webui
+    port: 8384
+    protocol: TCP
+    targetPort: 8384
+    nodePort: 31384
+  publishNotReadyAddresses: false
+  selector:
+    app.kubernetes.io/instance: syncthing
+    app.kubernetes.io/name: syncthing
+  type: NodePort

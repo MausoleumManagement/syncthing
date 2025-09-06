@@ -22,12 +22,20 @@ resources:
 global:
   storageClass: cephfs
 
-securityContext:
-  # -- Container security context for all containers
-  # Can be overruled per container
-  container:
-    runAsUser: 1000
-    runAsGroup: 1000
+# in case we want to force overwrite permissions
+#workload:
+#  main:
+#    podSpec:
+#      securityContext:
+#        fsGroupChangePolicy: Always
+
+# Not necessary because we squash all UIDs on the relevant NFS shares
+#securityContext:
+# # -- Container security context for all containers
+# # Can be overruled per container
+# container:
+#   runAsUser: 1000
+#   runAsGroup: 1000
 
 
 service:
@@ -50,40 +58,53 @@ service:
 
 
 persistence:
+  data:
+    enabled: true
+    type: pvc
+    mountPath: "/var/syncthing"
+    retain: true
+    size: 100Gi
+    storageClass: cephfs
+    accessModes:
+      - ReadWriteMany
   syncthing-wunderhort-programming-static:
     type: pvc
     existingClaim: syncthing-wunderhort-programming-static
     mountPath: /wunderhort/programming
     enabled: true
-  # the truecharts people want to eat 1.5G of RAM for various dirs each
-  # see https://github.com/trueforge-org/truecharts/blob/v2.0.0/charts/library/common/values.yaml#L261
-  # seems like a waste, so let's not do that
-  shared:
+  # disable default volume
+  config:
     enabled: false
+  # the truecharts people want to eat up to 1.5G of RAM for various dirs each
+  # see https://github.com/trueforge-org/truecharts/blob/v2.0.0/charts/library/common/values.yaml#L261
+  # seems like a waste, so let's not do that and use regular disk-backed emptydirs
+  shared:
+    enabled: true
     type: emptyDir
     mountPath: /shared
+    medium: ""
     targetSelectAll: true
   varlogs:
-    enabled: false
+    enabled: true
     type: emptyDir
     mountPath: /var/logs
-    medium: Memory
+    medium: ""
     targetSelectAll: true
   varrun:
-    enabled: false
+    enabled: true
     type: emptyDir
     mountPath: /var/run
-    medium: Memory
+    medium: ""
     targetSelectAll: true
   tmp:
-    enabled: false
+    enabled: true
     type: emptyDir
     mountPath: /tmp
-    medium: Memory
+    medium: ""
     targetSelectAll: true
   devshm:
-    enabled: false
+    enabled: true
     type: emptyDir
     mountPath: /dev/shm
-    medium: Memory
+    medium: ""
     targetSelectAll: true
