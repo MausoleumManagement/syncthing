@@ -7,7 +7,7 @@ apiVersion: v1
 kind: Service
 metadata:
   annotations:
-    kube-vip.io/loadbalancerIPs: 192.168.249.4
+    kube-vip.io/loadbalancerIPs: 192.168.14.4
   labels:
     app: syncthing-22.1.4
     app.kubernetes.io/instance: syncthing
@@ -38,7 +38,7 @@ apiVersion: v1
 kind: Service
 metadata:
   annotations:
-    kube-vip.io/loadbalancerIPs: 192.168.249.4
+    kube-vip.io/loadbalancerIPs: 192.168.14.4
   labels:
     app: syncthing-22.1.4
     app.kubernetes.io/instance: syncthing
@@ -69,7 +69,7 @@ apiVersion: v1
 kind: Service
 metadata:
   annotations:
-    kube-vip.io/loadbalancerIPs: 192.168.249.4
+    kube-vip.io/loadbalancerIPs: 192.168.14.4
   labels:
     app: syncthing-22.1.4
     app.kubernetes.io/instance: syncthing
@@ -100,7 +100,7 @@ apiVersion: v1
 kind: Service
 metadata:
   annotations:
-    kube-vip.io/loadbalancerIPs: 192.168.249.4
+    kube-vip.io/loadbalancerIPs: 192.168.14.4
   labels:
     app: syncthing-22.1.4
     app.kubernetes.io/instance: syncthing
@@ -224,7 +224,7 @@ spec:
         checksum/persistence: 057a9398f000771001c7fc53ffea9e59ec47c8193ce925a8a4137ce084c99685
         checksum/redis: 013343a028cbb3f7e08f4ba7522702dd98e52632c688641074b0b1db3df29894
         checksum/secrets: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
-        checksum/services: b2637b28b14d14199ff9ca78e9416020aab9d471a7ac6a9ed3d2e785463744ed
+        checksum/services: 11fc1cefe31a093f832b3de07ade5b416bb67c02452cdd159ccb57811453f0a1
         checksum/solr: 29c14feeaddbf7762052db593898d274941f539cee681ddc613957587686f347
       labels:
         app: syncthing-22.1.4
