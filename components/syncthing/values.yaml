@@ -41,18 +41,22 @@ global:
 service:
   main:
     type: LoadBalancer
+    externalTrafficPolicy: Local
     annotations:
       kube-vip.io/loadbalancerIPs: 192.168.14.4
   listeners:
     type: LoadBalancer
+    externalTrafficPolicy: Local
     annotations:
       kube-vip.io/loadbalancerIPs: 192.168.14.4
   listeners-udp:
     type: LoadBalancer
+    externalTrafficPolicy: Local
     annotations:
       kube-vip.io/loadbalancerIPs: 192.168.14.4
   discovery:
     type: LoadBalancer
+    externalTrafficPolicy: Local
     annotations:
       kube-vip.io/loadbalancerIPs: 192.168.14.4
 
