@@ -8,7 +8,8 @@ namespace: syncthing
 # https://github.com/trueforge-org/truecharts/tree/master/charts/stable/syncthing
 helmcharts:
   - name: syncthing
-    repo: oci://tccr.io/truecharts
+    #repo: oci://tccr.io/truecharts
+    repo: oci://oci.trueforge.org/truecharts
     version: 22.1.4
     releaseName: syncthing
     valuesFile: values.yaml
